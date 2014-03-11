@@ -13,7 +13,6 @@ import models.User;
 import play.*;
 import play.mvc.*;
 import repositories.FileSystemMessageRepository;
-import repositories.MessageRepository;
 import views.html.*;
 
 public class Application extends Controller {
@@ -22,16 +21,28 @@ public class Application extends Controller {
 	}
 
 	public static Result getMessages() throws Exception{
-		MessageRepository repo = new FileSystemMessageRepository();
-		return ok(messages.render(repo.getMessagesSince(null)));
+		FileSystemMessageRepository repo = new FileSystemMessageRepository();
+		StringBuilder out = new StringBuilder();
+		
+		boolean first = true;
+		
+		out.append("[");
+		for(String message: repo.getMessageIds()){
+			if(first != true){
+				out.append(",");
+			}
+			out.append("\"" + message + "\"");
+			first = false;
+		}
+		out.append("]");
+		
+		return ok(out.toString());
 	}
 
 	public static Result sendMessage() throws Exception{
 		String message = request().body().asFormUrlEncoded().get("message")[0];
 		
-		SecureRandom random = new SecureRandom();
-		
-		PrintWriter out = new PrintWriter("public/messages/" + new BigInteger(130, random).toString(32) + ".txt");
+		PrintWriter out = new PrintWriter("public/messages/" + System.currentTimeMillis() + ".txt");
 		out.println(request().remoteAddress());
 		out.println();
 		out.println(message);

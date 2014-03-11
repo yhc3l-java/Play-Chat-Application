@@ -11,25 +11,23 @@ import java.util.List;
 import models.Message;
 import models.User;
 
-public class FileSystemMessageRepository implements MessageRepository {
-	@Override
-	public List<Message> getMessagesSince(Date pointInTime) throws Exception {
-		List<Message> messages = new ArrayList<Message>();  
+public class FileSystemMessageRepository {
+	public List<String> getMessageIds() throws Exception {
+		List<String> messageIds = new ArrayList<String>();  
 
 		String path = "public/messages/"; 
 		
 		File[] listOfFiles = new File(path).listFiles(); 
 
-		for (int i = 0; i < listOfFiles.length; i++) 
+		for (int i = listOfFiles.length - 10; i < listOfFiles.length; i++) 
 		{
 			if (listOfFiles[i].isFile()) 
 			{
-				Message message = parseMessage(listOfFiles[i].getAbsolutePath());
-				messages.add(message);
+				messageIds.add(listOfFiles[i].getName());
 			}
 		}
 		
-		return messages;
+		return messageIds;
 	}
 
 	private Message parseMessage(String path) throws Exception{
