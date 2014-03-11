@@ -1,0 +1,17 @@
+@(messages: List[Message])
+
+@for(message <- messages){
+	<div>
+		<span class="user"><i class="fa fa-user"></i></span>
+		
+		@if(message.getUser().getName()) {
+			@message.getUser().getName()
+		} else {
+			 @message.getUser().getIp() 
+	 	}
+	 	
+	 	says:
+		
+		@message.getMessage()
+	</div>
+}
